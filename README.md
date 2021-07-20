@@ -1,4 +1,4 @@
-# Script for checking BlueCherry video server cameras
+## Script for checking BlueCherry video server cameras
 ## The script checks:
 - Continuous(C)/Motion(M) recording mode  
   If Motion (M), then there are no more checks and a record is added to the log that the camera is recording on motion  
@@ -11,13 +11,16 @@
 
 ## Installation
 1. go as root;  
-Create .env file in the script directory with your credetionals:  
-*CHERRY_USER_DB=your_cherry_user_db  
+Create .env file in the script directory  
+<pre><code>sudo vim .env</code></pre>  
+with your credetionals:  
+<pre><code>
+CHERRY_USER_DB=your_cherry_user_db  
 CHERRY_PASSWORD_DB=your_cherry_password_db  
 CHERRY_USER=your_cherry_user_web_user  
 CHERRY_PASSWORD=your_cherry_user_web_password  
-CHERRY_IP=your_ip_blue_cherry*  
-<pre><code>sudo vim .env</code></pre> 
+CHERRY_IP=your_ip_blue_cherry
+</code></pre> 
 2. install requirements  
 <pre><code>pip3 install requirements.txt</code></pre>
 3. run script  
