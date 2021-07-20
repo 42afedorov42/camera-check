@@ -1,5 +1,5 @@
 ## Script for checking BlueCherry video server cameras
-## The script checks:
+### The script checks:
 - Continuous(C)/Motion(M) recording mode  
   If Motion (M), then there are no more checks and a record is added to the log that the camera is recording on motion  
   
@@ -9,7 +9,7 @@
   - a frame from a stream to a black and white image according to the average color of the RGB table;  
   - the percentage of image sharpness.  
 
-## Installation
+### Installation
 1. go as root;  
 Create .env file in the script directory  
 <pre><code>sudo vim .env</code></pre>  
@@ -26,7 +26,7 @@ CHERRY_IP=your_ip_blue_cherry
 3. run script  
 <pre><code>python3 camera-check.py</code></pre> 
 
-## Schedule a script to run in cron as root
+### Schedule a script to run in cron as root
 crontab -e
 Example:
 <pre><code>16,26,36,46,56 * * * *. $HOME/.bashrc; /usr/bin/ python3/usr/local/bin/camera-check/camera-check.py</code></pre>
