@@ -1,0 +1,5 @@
+PyMySQL
+loguru
+dotenv
+numpy
+opencv-python
