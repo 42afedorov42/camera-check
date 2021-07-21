@@ -27,8 +27,8 @@ CHERRY_IP=your_ip_blue_cherry
 <pre><code>python3 camera-check.py</code></pre> 
 
 ### Schedule a script to run in cron as root
-crontab -e
-Example:
+<pre><code>crontab -e</code></pre>
+Example:  
 <pre><code>16,26,36,46,56 * * * *. $HOME/.bashrc; /usr/bin/ python3/usr/local/bin/camera-check/camera-check.py</code></pre>
 It is not advisable to use such an entry:  
 */9 * * * * . $HOME/.bashrc; /usr/bin/python3/ usr/local/bin/camera_check.py  
