@@ -21,8 +21,10 @@ def main():
     CHERRY_IP = os.getenv('CHERRY_IP')
     stream_template = f'https://{CHERRY_USER}:{CHERRY_PASSWORD}@{CHERRY_IP}\
                         :7001/media/mjpeg?multipart=true&id='
-    exceptions = [f'https://{CHERRY_USER}:{CHERRY_PASSWORD}@{CHERRY_IP}\
-                    :7001/media/mjpeg?multipart=true&id=000049']
+    exceptions = [
+        f'https://{CHERRY_USER}:{CHERRY_PASSWORD}@{CHERRY_IP}\
+        :7001/media/mjpeg?multipart=true&id=000049',
+    ]
 
     now = datetime.now()
     year_folder = now.strftime("%Y")
@@ -33,10 +35,12 @@ def main():
     date_now = now.strftime("%d-%m-%Y_%H-%M")
     hour_of_week_now = get_hour_of_week(day_of_week_today)
 
-    connection = pymysql.connect(host='localhost',
-                                user=CHERRY_USER_DB,
-                                password=CHERRY_PASSWORD_DB,
-                                db='bluecherry')
+    connection = pymysql.connect(
+        host='localhost',
+        user=CHERRY_USER_DB,
+        password=CHERRY_PASSWORD_DB,
+        db='bluecherry'
+    )
 
     for cam_id, cam_name, cam_sched_over_glob, cam_sched in cherry_cams(connection):
         cams_rec_path = f"/mnt/video/{year_folder}/{month_folder}/{day_folder}/{cam_id}"
@@ -94,11 +98,15 @@ def cherry_cams(connection):
     scheds_over_glob = []
     schedulers = []
     with connection.cursor() as cursor:
-        cursor.execute('SELECT id, \
-                            device_name, \
-                            schedule_override_global, \
-                            schedule \
-                        FROM Devices;')
+        cursor.execute(
+            'SELECT \
+                id, \
+                device_name, \
+                schedule_override_global, \
+                schedule \
+            FROM Devices;'
+        )
+
         for row in cursor:
             cams_id.append(str(row[0]).rjust(6, '0'))
             cams_names.append(str(row[1]))
@@ -110,35 +118,38 @@ def cherry_cams(connection):
 
 
 def get_hour_of_week(day_of_week_today):
-    '''BlueCherry uses a table that indicates at what time 
+    '''BlueCherry uses a table that indicates at what time
     and in what mode the camera will record.
-    The time in this table is the hour of the week. 
+    The time in this table is the hour of the week.
     Countdown starts from Sunday.
 
     '''
     hour_of_week_now = {
-                        'Sunday':hour_now,
-                        'Monday':24 + int(hour_now),
-                        'Tuesday':48 + int(hour_now),
-                        'Wednesday':72 + int(hour_now),
-                        'Thursday':96 + int(hour_now),
-                        'Friday':120 + int(hour_now),
-                        'Saturday':148 + int(hour_now)
+        'Sunday':hour_now,
+        'Monday':24 + int(hour_now),
+        'Tuesday':48 + int(hour_now),
+        'Wednesday':72 + int(hour_now),
+        'Thursday':96 + int(hour_now),
+        'Friday':120 + int(hour_now),
+        'Saturday':148 + int(hour_now)
     }[day_of_week_today]
     return hour_of_week_now
 
 
 def recording_mode_continuous(connection, hour_of_week_now, cam_sched_over_glob, cam_sched):
-    '''Define the recording mode of the camera. 
-    If the mode !="Continuous", the camera recording on motion 
+    '''Define the recording mode of the camera.
+    If the mode !="Continuous", the camera recording on motion
     and does not need to be checked.
 
     '''
     global_sсheduler = []
     with connection.cursor() as cursor:
-        cursor.execute('SELECT value \
-                        FROM GlobalSettings \
-                        WHERE parameter = "G_DEV_SCED";')
+        cursor.execute(
+            'SELECT value \
+            FROM GlobalSettings \
+            WHERE parameter = "G_DEV_SCED";'
+        )
+
         for row in cursor:
             global_sсheduler.append(str(row[0]))
     logger.info('Database connection has been established. \
@@ -155,7 +166,7 @@ def recording_mode_continuous(connection, hour_of_week_now, cam_sched_over_glob,
 
 
 def cam_rec_directory_check(cams_rec_path, cam_name):
-    '''BlueCherry creates a new directory for camera recordings every day at 00:00. 
+    '''BlueCherry creates a new directory for camera recordings every day at 00:00.
     If the directory is not created, then the camera has stopped recording.
 
     '''
@@ -168,7 +179,7 @@ def cam_rec_directory_check(cams_rec_path, cam_name):
 
 
 def cam_rec_size_check(cams_rec_path, cam_name):
-    '''Checking the size of the directory with camera records at 2 second intervals. 
+    '''Checking the size of the directory with camera records at 2 second intervals.
     If the size does not change, then the camrea does not recording.
 
     '''
@@ -201,7 +212,7 @@ def color_definition(analyzed_frame, cam_name):
 
 def sharpness_rating(frame, cam_name):
     '''Definition of sharpness.
-    
+
     '''
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     lap = cv2.Laplacian(img, cv2.CV_16S)
