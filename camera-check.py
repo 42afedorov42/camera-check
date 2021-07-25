@@ -62,9 +62,9 @@ def main():
 
 
 def logging():
-    '''Adding logging.
+    """Adding logging.
 
-    '''
+    """
     log_path = '/var/log/bluecherry_cams/'
     if os.path.exists("log_path") is False:
         Path(log_path).mkdir(parents=True, exist_ok=True)
@@ -78,21 +78,21 @@ def logging():
 
 
 def check_analyzed_frame_path(cams_rec_path):
-    '''Сreating a directory for analyzed frames if it does not exist
+    """Сreating a directory for analyzed frames if it does not exist
     in the videotapes directory.
 
-    '''
+    """
     if os.path.exists(f"{cams_rec_path}_frames/") is False:
         Path(cams_rec_path).mkdir(parents=True, exist_ok=True)
     return None
 
 
 def cherry_cams(connection):
-    '''Get all cameras from the BlueCherry database for analysis.
+    """Get all cameras from the BlueCherry database for analysis.
     Since recordings from cameras in the title use a camera id with 6 characters,
     then when forming the list of camera ids, add zeros up to 6 characters.
     
-    '''
+    """
     cams_id = []
     cams_names = []
     scheds_over_glob = []
@@ -118,12 +118,12 @@ def cherry_cams(connection):
 
 
 def get_hour_of_week(day_of_week_today):
-    '''BlueCherry uses a table that indicates at what time
+    """BlueCherry uses a table that indicates at what time
     and in what mode the camera will record.
     The time in this table is the hour of the week.
     Countdown starts from Sunday.
 
-    '''
+    """
     hour_of_week_now = {
         'Sunday':hour_now,
         'Monday':24 + int(hour_now),
@@ -137,11 +137,11 @@ def get_hour_of_week(day_of_week_today):
 
 
 def recording_mode_continuous(connection, hour_of_week_now, cam_schedule_override_global, cam_sched):
-    '''Define the recording mode of the camera.
+    """Define the recording mode of the camera.
     If the mode !="Continuous", the camera recording on motion
     and does not need to be checked.
 
-    '''
+    """
     global_sсheduler = []
     with connection.cursor() as cursor:
         cursor.execute(
@@ -167,10 +167,10 @@ def recording_mode_continuous(connection, hour_of_week_now, cam_schedule_overrid
 
 
 def cam_rec_directory_check(cams_rec_path, cam_name):
-    '''BlueCherry creates a new directory for camera recordings every day at 00:00.
+    """BlueCherry creates a new directory for camera recordings every day at 00:00.
     If the directory is not created, then the camera has stopped recording.
 
-    '''
+    """
     if os.path.exists(cams_rec_path) is False:
         logger.error("Camera ("+cam_name+") does not record! \
                     ("+cams_rec_path+") directory is missing.")
@@ -180,10 +180,10 @@ def cam_rec_directory_check(cams_rec_path, cam_name):
 
 
 def cam_rec_size_check(cams_rec_path, cam_name):
-    '''Checking the size of the directory with camera records at 2 second intervals.
+    """Checking the size of the directory with camera records at 2 second intervals.
     If the size does not change, then the camrea does not recording.
 
-    '''
+    """
     check_size_folder_cam = os.popen(f"du -sb {cams_rec_path}").read()
     time.sleep(2)
     check_size_folder_cam_new = os.popen(f"du -sb {cams_rec_path}").read()
@@ -197,11 +197,11 @@ def cam_rec_size_check(cams_rec_path, cam_name):
 
 
 def color_definition(analyzed_frame, cam_name):
-    '''Find the average value of the RGB color.
+    """Find the average value of the RGB color.
     If values < 10, then the camera records a black image.
     If values < 200, then the camera records a blown out image.
 
-    '''
+    """
     per_row = numpy.average(analyzed_frame, axis=0)
     color_rgb = numpy.average(per_row, axis=0)
     if color_rgb[0] < 10 and color_rgb[1] < 10 and color_rgb[2] < 10:
@@ -212,9 +212,9 @@ def color_definition(analyzed_frame, cam_name):
 
 
 def sharpness_rating(frame, cam_name):
-    '''Definition of sharpness.
+    """Definition of sharpness.
 
-    '''
+    """
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     lap = cv2.Laplacian(img, cv2.CV_16S)
     mean, stddev = cv2.meanStdDev(lap)
