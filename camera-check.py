@@ -42,13 +42,13 @@ def main():
         db='bluecherry'
     )
 
-    for cam_id, cam_name, cam_sched_over_glob, cam_sched in cherry_cams(connection):
-        cams_rec_path = f"/mnt/video/{year_folder}/{month_folder}/{day_folder}/{cam_id}"
+    for id_, cam_name, cam_schedule_override_global, cam_sched in cherry_cams(connection):
+        cams_rec_path = f"/mnt/video/{year_folder}/{month_folder}/{day_folder}/{id_}"
         check_analyzed_frame_path(cams_rec_path)
-        if recording_mode_continuous(cam_name, hour_of_week_now, connection, cam_sched_over_glob, cam_sched) is True:
+        if recording_mode_continuous(hour_of_week_now, connection, cam_schedule_override_global, cam_sched) is True:
             if cam_rec_directory_check(cams_rec_path, cam_name) is True:
                 if cam_rec_size_check(cams_rec_path, cam_name) is True:
-                    cam_stream = stream_template + cam_id
+                    cam_stream = stream_template + id_
                     if cam_stream in exceptions:
                         logger.info("Camera ("+cam_name+") added to exception")
                     capture = cv2.VideoCapture(cam_stream)
@@ -136,7 +136,7 @@ def get_hour_of_week(day_of_week_today):
     return hour_of_week_now
 
 
-def recording_mode_continuous(connection, hour_of_week_now, cam_sched_over_glob, cam_sched):
+def recording_mode_continuous(connection, hour_of_week_now, cam_schedule_override_global, cam_sched):
     '''Define the recording mode of the camera.
     If the mode !="Continuous", the camera recording on motion
     and does not need to be checked.
@@ -156,7 +156,8 @@ def recording_mode_continuous(connection, hour_of_week_now, cam_sched_over_glob,
                 Global sheduler info received.')
 
     recording_mode = ''
-    if cam_sched_over_glob == '0':
+    hour_of_week_now = get_hour_of_week(day_of_week_today)
+    if cam_schedule_override_global == '0':
         recording_mode = str(global_sсheduler[0][hour_of_week_now])
     recording_mode = str(cam_sched[hour_of_week_now])
     logger.info('Recording mode was detecteed: '+recording_mode)
